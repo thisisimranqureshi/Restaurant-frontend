@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap');
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #000;
+  border-bottom: 1px solid #222;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Logo */
+.header-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s;
+}
+
+.header-logo:hover {
+  opacity: 0.75;
+}
+
+/* Nav Links */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link {
+  color: #888;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 400;
+  padding: 6px 14px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #fff;
+  background: #111;
+}
+
+.nav-link.active {
+  color: #fff;
+  background: #1a1a1a;
+  font-weight: 500;
+}
+
+/* Right Side */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  white-space: nowrap;
+}
+
+.header-user {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    gap: 12px;
+  }
+
+  .header-nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    gap: 2px;
+  }
+
+  .nav-link {
+    font-size: 0.82rem;
+    padding: 5px 10px;
+  }
+
+  .header-user {
+    display: none;
+  }
+}
