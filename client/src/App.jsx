@@ -4,6 +4,7 @@ import { useAuth } from './Context/AuthContext';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Header from './Components/Header';
+import Inventory from './Pages/Inventory';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -14,10 +15,14 @@ function App() {
       {/* Only show header when logged in */}
       {token && <Header />}
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        
+        <Route path="/" element={<Navigate to="/inventory" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         {/* Protected routes will go here */}
+        <Route path="/inventory" element={
+  <ProtectedRoute><Inventory /></ProtectedRoute>
+} />
       </Routes>
     </BrowserRouter>
   );
