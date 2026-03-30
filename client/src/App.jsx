@@ -5,6 +5,7 @@ import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Header from './Components/Header';
 import Inventory from './Pages/Inventory';
+import SalePurchase from './Pages/SalePurchase';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
         {/* Protected routes will go here */}
         <Route path="/inventory" element={
   <ProtectedRoute><Inventory /></ProtectedRoute>
+} />
+<Route path="/sale-purchase" element={
+  <ProtectedRoute><SalePurchase /></ProtectedRoute>
 } />
       </Routes>
     </BrowserRouter>

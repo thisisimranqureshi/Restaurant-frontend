@@ -16,9 +16,10 @@ const Header = () => {
 
   const links = [
     { path: '/inventory', label: 'Inventory' },
+    { path: '/sale-purchase', label: 'Sale / Purchase' },
     { path: '/transaction', label: 'Transaction' },
     { path: '/usage', label: 'Usage' },
-    { path: '/sale-purchase', label: 'Sale / Purchase' },
+    
   ];
 
   return (
