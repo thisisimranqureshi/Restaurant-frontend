@@ -6,6 +6,7 @@ import Signup from './Pages/Signup';
 import Header from './Components/Header';
 import Inventory from './Pages/Inventory';
 import SalePurchase from './Pages/SalePurchase';
+import Transaction from './Pages/Transaction';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -26,6 +27,9 @@ function App() {
 } />
 <Route path="/sale-purchase" element={
   <ProtectedRoute><SalePurchase /></ProtectedRoute>
+} />
+<Route path="/transaction" element={
+  <ProtectedRoute><Transaction /></ProtectedRoute>
 } />
       </Routes>
     </BrowserRouter>
