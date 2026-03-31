@@ -1,0 +1,239 @@
+/* ===== USAGE PAGE — COMPACT PROFESSIONAL UI ===== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap');
+
+.usage-page {
+  padding: 16px 20px;
+  min-height: 100vh;
+  background: #f6f7fb;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #1f2937;
+  width: 1100px;
+  margin: 0 auto;
+}
+
+/* ───── Top Bar ───── */
+
+.usage-topbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+
+  border: 1px solid #e5e7eb;
+}
+
+.usage-title {
+  font-size: 1.4rem;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* ───── Tabs ───── */
+
+.usage-tabs {
+  display: flex;
+  gap: 3px;
+  background: #f3f4f6;
+  font-family: 'DM Sans', sans-serif;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.usage-tab {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+
+  font-size: 0.72rem;
+  font-weight: 500;
+
+  color: #6b7280;
+  border-radius: 5px;
+  cursor: pointer;
+
+  transition: all .15s;
+}
+
+.usage-tab:hover {
+  background: #e5e7eb;
+}
+
+.usage-tab.active {
+  background: #111827;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ───── Inputs ───── */
+
+.usage-filter-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.usage-input {
+  border: 1px solid #d1d5db;
+  background: #fff;
+
+  padding: 3px 6px;
+  border-radius: 5px;
+
+  font-size: 0.72rem;
+  height: 24px;
+
+  outline: none;
+}
+
+.sep {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.usage-apply-btn {
+  background: #111827;
+  color: #fff;
+
+  border: none;
+  padding: 3px 10px;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ───── Meta Pills ───── */
+
+.usage-meta {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.meta-pill {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+
+  padding: 2px 8px;
+  border-radius: 14px;
+
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.meta-pill b {
+  color: #111827;
+}
+
+/* ───── Table Wrapper ───── */
+
+.usage-table-wrap {
+  background: #fff;
+  border-radius: 8px;
+
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* ───── Table ───── */
+
+.usage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.usage-table thead {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.usage-table th {
+  text-align: left;
+  padding: 7px 10px;
+
+  font-size: 0.62rem;
+  font-weight: 600;
+
+  letter-spacing: .05em;
+  text-transform: uppercase;
+
+  color: #6b7280;
+}
+
+.usage-table td {
+  padding: 7px 10px;
+  color: #374151;
+}
+
+.usage-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.usage-table tbody tr:hover {
+  background: #fafafa;
+}
+
+/* ───── Columns ───── */
+
+.col-num {
+  width: 28px;
+  color: #9ca3af;
+  font-size: 0.7rem;
+}
+
+.col-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ───── Quantity Badge ───── */
+
+.qty-badge {
+
+  color: #020202;
+
+  padding: 2px 6px;
+  border-radius: 4px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ───── Unit ───── */
+
+.col-unit {
+  color: #9ca3af;
+  font-size: 0.7rem;
+}
+
+/* ───── Items Chips ───── */
+
+.col-items {
+  white-space: normal;
+}
+
+.chip {
+  display: inline-block;
+
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+
+  color: #4b5563;
+
+  padding: 1px 6px;
+  border-radius: 4px;
+
+  font-size: 0.65rem;
+
+  margin: 1px 3px 1px 0;
+}

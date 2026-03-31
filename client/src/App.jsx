@@ -7,6 +7,7 @@ import Header from './Components/Header';
 import Inventory from './Pages/Inventory';
 import SalePurchase from './Pages/SalePurchase';
 import Transaction from './Pages/Transaction';
+import Usage from './Pages/Usage';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
 <Route path="/transaction" element={
   <ProtectedRoute><Transaction /></ProtectedRoute>
 } />
+<Route path="/usage" element={<Usage />} />
       </Routes>
     </BrowserRouter>
   );
