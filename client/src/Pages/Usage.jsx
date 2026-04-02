@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react';
 import API from '../Api/Axios';
 import './Usage.css';
 
+
+const formatQty = (qty, unit) => {
+  const u = unit?.toLowerCase();
+  if (u === 'g'  && qty >= 1000) return `${(qty / 1000).toFixed(2)} kg`;
+  if (u === 'mg' && qty >= 1000) return `${(qty / 1000).toFixed(2)} g`;
+  if (u === 'ml' && qty >= 1000) return `${(qty / 1000).toFixed(2)} L`;
+  return `${qty.toFixed(2)} ${unit}`;
+};
+
+const CHIP_LIMIT = 4;
+
 const Usage = () => {
   const [filterType, setFilterType] = useState('month');
   const [month, setMonth] = useState(() => {
@@ -13,6 +24,7 @@ const Usage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [popupItems, setPopupItems] = useState(null); // null = closed
 
   const fetchUsage = async () => {
     setLoading(true);
@@ -108,28 +120,60 @@ const Usage = () => {
                 <th>#</th>
                 <th>Ingredient</th>
                 <th>Total Used</th>
-                <th>Unit</th>
                 <th>Used In Items</th>
               </tr>
             </thead>
             <tbody>
-              {data.ingredients.map((ing, i) => (
-                <tr key={`${ing.name}-${ing.unit}`}>
-                  <td className="col-num">{i + 1}</td>
-                  <td className="col-name">{ing.name}</td>
-                  <td className="col-qty">
-                    <span className="qty-badge">{ing.totalQuantity.toFixed(2)}</span>
-                  </td>
-                  <td className="col-unit">{ing.unit}</td>
-                  <td className="col-items">
-                    {ing.usedInItems.map((u, j) => (
-                      <span key={j} className="chip">{u.menuItem} ×{u.qtySold}</span>
-                    ))}
-                  </td>
-                </tr>
-              ))}
+              {data.ingredients.map((ing, i) => {
+                const visibleChips = ing.usedInItems.slice(0, CHIP_LIMIT);
+                const hiddenCount  = ing.usedInItems.length - CHIP_LIMIT;
+
+                return (
+                  <tr key={`${ing.name}-${ing.unit}`}>
+                    <td className="col-num">{i + 1}</td>
+                    <td className="col-name">{ing.name}</td>
+
+                    {/* ── Merged quantity + unit column ── */}
+                    <td className="col-qty">
+                      <span className="qty-badge">{formatQty(ing.totalQuantity, ing.unit)}</span>
+                    </td>
+
+                    {/* ── Chips with +N more button ── */}
+                    <td className="col-items">
+                      {visibleChips.map((u, j) => (
+                        <span key={j} className="chip">{u.menuItem} ×{u.qtySold}</span>
+                      ))}
+                      {hiddenCount > 0 && (
+                        <button
+                          className="chip chip-more"
+                          onClick={() => setPopupItems({ name: ing.name, items: ing.usedInItems })}
+                        >
+                          +{hiddenCount} more
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ── Popup / Modal ── */}
+      {popupItems && (
+        <div className="usage-overlay" onClick={() => setPopupItems(null)}>
+          <div className="usage-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-header">
+              <span className="popup-title">Used In Items — <em>{popupItems.name}</em></span>
+              <button className="popup-close" onClick={() => setPopupItems(null)}>✕</button>
+            </div>
+            <div className="popup-chips">
+              {popupItems.items.map((u, j) => (
+                <span key={j} className="chip">{u.menuItem} ×{u.qtySold}</span>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

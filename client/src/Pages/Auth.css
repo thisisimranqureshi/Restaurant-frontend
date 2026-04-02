@@ -9,7 +9,7 @@
   --accent: #000000;
   --accent-hover: #333333;
   --text: #111111;
-  --muted: #888;
+  --muted: #000000;
 }
 
 body {
@@ -84,7 +84,7 @@ body {
 
 .form-group label {
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 900;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -108,7 +108,7 @@ body {
 }
 
 .form-group input::placeholder {
-  color: #bbb;
+  color: #050505;
 }
 
 /* ─── Button ─── */

@@ -8,6 +8,7 @@ import Inventory from './Pages/Inventory';
 import SalePurchase from './Pages/SalePurchase';
 import Transaction from './Pages/Transaction';
 import Usage from './Pages/Usage';
+import ShortcutsGuide from './Pages/ShortcutsGuide';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
   <ProtectedRoute><Transaction /></ProtectedRoute>
 } />
 <Route path="/usage" element={<Usage />} />
+<Route path="/shortcuts" element={<ShortcutsGuide />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,157 @@
+.sg-page {
+  min-height: 100vh;
+  background: #f9fafb;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 60px;
+}
+
+/* ── Top bar ── */
+.sg-topbar {
+  padding: 28px 36px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #ffffff;
+}
+
+.sg-back {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sg-back:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.sg-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 6px;
+}
+
+.sg-sub {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* ── Content ── */
+.sg-content {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1250px;
+}
+
+/* ── Section ── */
+.sg-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+/* ── Table ── */
+.sg-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.sg-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+.sg-row:last-child { border-bottom: none; }
+
+.sg-row:hover {
+  background: #f9fafb;
+}
+
+/* ── Keys ── */
+.sg-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.sg-kbd {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-bottom: 2px solid #9ca3af;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: #111827;
+}
+
+.sg-plus {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* ── Description ── */
+.sg-desc {
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* ── Tip ── */
+.sg-tip {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #3b82f6;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.7;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.sg-tip b {
+  color: #111827;
+}
+
+/* ── Button ── */
+.sp-shortcuts-btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sp-shortcuts-btn:hover {
+  background: #f3f4f6;
+}
+
+.sp-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}

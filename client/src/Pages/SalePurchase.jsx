@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import API from '../Api/Axios';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import './SalePurchase.css';
 
 const emptyRow = () => ({ menuItemId: '', name: '', price: 0, quantity: 1, subtotal: 0 });
 
-const SearchableDropdown = ({ menuItems, value, onChange }) => {
+// ─────────────────────────────────────────────
+// SearchableDropdown
+// ─────────────────────────────────────────────
+const SearchableDropdown = ({ menuItems, value, onChange, triggerFocus, onFocusDone, onOpenChange }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [highlighted, setHighlighted] = useState(0);
@@ -13,16 +17,32 @@ const SearchableDropdown = ({ menuItems, value, onChange }) => {
   const listRef = useRef(null);
 
   const selected = menuItems.find((m) => m._id === value);
-
   const filtered = menuItems.filter((m) =>
     m.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Close on outside click
+  // Tell parent whenever open state changes
+  const setOpenAndNotify = (val) => {
+    setOpen(val);
+    onOpenChange?.(val);
+  };
+
+  // Auto-focus this dropdown when parent asks (new row added)
+  useEffect(() => {
+    if (triggerFocus) {
+      setOpenAndNotify(true);
+      setTimeout(() => {
+        const input = ref.current?.querySelector('.sd-search');
+        if (input) input.focus();
+      }, 30);
+      onFocusDone?.();
+    }
+  }, [triggerFocus]);
+
   useEffect(() => {
     const handleClick = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false);
+        setOpenAndNotify(false);
         setSearch('');
         setHighlighted(0);
       }
@@ -31,64 +51,59 @@ const SearchableDropdown = ({ menuItems, value, onChange }) => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Reset highlight when search changes
-  useEffect(() => {
-    setHighlighted(0);
-  }, [search]);
+  useEffect(() => { setHighlighted(0); }, [search]);
 
-  // Scroll highlighted item into view
   useEffect(() => {
     if (listRef.current) {
       const items = listRef.current.querySelectorAll('.sd-item');
-      if (items[highlighted]) {
-        items[highlighted].scrollIntoView({ block: 'nearest' });
-      }
+      if (items[highlighted]) items[highlighted].scrollIntoView({ block: 'nearest' });
     }
   }, [highlighted]);
 
   const handleSelect = (item) => {
     onChange(item._id);
-    setOpen(false);
+    setOpenAndNotify(false);
     setSearch('');
     setHighlighted(0);
   };
 
   const handleKeyDown = (e) => {
     if (!open) {
-      if (e.key === 'Enter' || e.key === 'ArrowDown') {
-        setOpen(true);
-      }
+      if (e.key === 'Enter' || e.key === 'ArrowDown') setOpenAndNotify(true);
       return;
     }
-
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setHighlighted((prev) => Math.min(prev + 1, filtered.length - 1));
+        setHighlighted((p) => Math.min(p + 1, filtered.length - 1));
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setHighlighted((prev) => Math.max(prev - 1, 0));
+        setHighlighted((p) => Math.max(p - 1, 0));
         break;
       case 'Enter':
         e.preventDefault();
-        if (filtered[highlighted]) {
-          handleSelect(filtered[highlighted]);
-        }
+        e.stopPropagation();
+        if (filtered[highlighted]) handleSelect(filtered[highlighted]);
         break;
       case 'Escape':
-        setOpen(false);
+        setOpenAndNotify(false);
         setSearch('');
         setHighlighted(0);
         break;
       default:
+        // Block ALL Ctrl+Enter from reaching window while dropdown is open
+        if (e.ctrlKey && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         break;
     }
   };
 
   return (
     <div className="sd-wrap" ref={ref}>
-      <div className="sd-trigger" onClick={() => setOpen(!open)}>
+      <div className="sd-trigger" onClick={() => setOpenAndNotify(!open)}>
         <span className={selected ? 'sd-selected' : 'sd-placeholder'}>
           {selected ? selected.name : 'Select item'}
         </span>
@@ -129,13 +144,23 @@ const SearchableDropdown = ({ menuItems, value, onChange }) => {
   );
 };
 
+// ─────────────────────────────────────────────
+// SalePurchase
+// ─────────────────────────────────────────────
 const SalePurchase = () => {
+  const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [rows, setRows] = useState([emptyRow()]);
   const [tax, setTax] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [successInvoice, setSuccessInvoice] = useState(null);
+  const [focusRowIndex, setFocusRowIndex] = useState(null);
+  const [focusQtyIndex, setFocusQtyIndex] = useState(null);
+  const qtyRefs = useRef([]);
+
+  // Track how many dropdowns are currently open — Ctrl+Enter blocked when > 0
+  const openDropdownCount = useRef(0);
 
   const today = new Date().toLocaleString('en-PK', {
     year: 'numeric', month: 'short', day: 'numeric',
@@ -154,6 +179,56 @@ const SalePurchase = () => {
     fetchMenu();
   }, []);
 
+  // Focus + select-all on qty input when requested
+  useEffect(() => {
+    if (focusQtyIndex !== null) {
+      setTimeout(() => {
+        const input = qtyRefs.current[focusQtyIndex];
+        if (input) {
+          input.focus();
+          input.select();
+        }
+        setFocusQtyIndex(null);
+      }, 40);
+    }
+  }, [focusQtyIndex]);
+
+  const addRow = useCallback(() => {
+    setRows((prev) => {
+      const lastRow = prev[prev.length - 1];
+      // If the last row is still empty, just focus it — don't add another
+      if (!lastRow.menuItemId) {
+        setFocusRowIndex(prev.length - 1);
+        return prev;
+      }
+      const next = [...prev, emptyRow()];
+      setFocusRowIndex(next.length - 1);
+      return next;
+    });
+  }, []);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        // Block if any dropdown is open
+        if (openDropdownCount.current > 0) return;
+        e.preventDefault();
+        addRow();
+        return;
+      }
+      if (e.key === 'Escape' && successInvoice) {
+        setSuccessInvoice(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [addRow, successInvoice]);
+
+  const handleDropdownOpenChange = (isOpen) => {
+    openDropdownCount.current = Math.max(0, openDropdownCount.current + (isOpen ? 1 : -1));
+  };
+
   const handleItemSelect = (index, menuItemId) => {
     const selected = menuItems.find((m) => m._id === menuItemId);
     if (!selected) return;
@@ -166,6 +241,8 @@ const SalePurchase = () => {
       subtotal: selected.price * updated[index].quantity,
     };
     setRows(updated);
+    // Auto-jump to qty after item selected
+    setFocusQtyIndex(index);
   };
 
   const handleQtyChange = (index, qty) => {
@@ -176,7 +253,18 @@ const SalePurchase = () => {
     setRows(updated);
   };
 
-  const addRow = () => setRows([...rows, emptyRow()]);
+  const handleQtyKeyDown = (e, index) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      addRow();
+      return;
+    }
+    if ((e.key === 'Backspace' || e.key === 'Delete') && !rows[index].menuItemId) {
+      e.preventDefault();
+      removeRow(index);
+    }
+  };
+
   const removeRow = (index) => {
     const updated = rows.filter((_, i) => i !== index);
     setRows(updated.length ? updated : [emptyRow()]);
@@ -210,11 +298,17 @@ const SalePurchase = () => {
 
       {/* Top Bar */}
       <div className="sp-topbar">
-        <div>
-          <h1>Sale / Purchase</h1>
-          
+        <h1>Sale / Purchase</h1>
+        <div className="sp-topbar-right">
+          <button
+            className="sp-shortcuts-btn"
+            onClick={() => navigate('/shortcuts')}
+            title="View keyboard shortcuts"
+          >
+            ⌨ Shortcuts
+          </button>
+          <span className="sp-date">{today}</span>
         </div>
-        <span className="sp-date">{today}</span>
       </div>
 
       <div className="sp-body">
@@ -237,17 +331,12 @@ const SalePurchase = () => {
             <thead>
               <tr>
                 <th>
-                  {/* Add button in header — right next to items */}
-                  <button className="sp-add-row" onClick={addRow}>+ Add</button>
+                  <button className="sp-add-row" onClick={addRow} title="Add row (Ctrl+Enter)">+ Add</button>
                 </th>
                 <th>Item</th>
                 <th>Price</th>
                 <th>Qty</th>
                 <th>Total</th>
-                {/* <th>
-               
-                  <button className="sp-add-row" onClick={addRow}>+ Add</button>
-                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -259,6 +348,9 @@ const SalePurchase = () => {
                       menuItems={menuItems}
                       value={row.menuItemId}
                       onChange={(id) => handleItemSelect(index, id)}
+                      triggerFocus={focusRowIndex === index}
+                      onFocusDone={() => setFocusRowIndex(null)}
+                      onOpenChange={handleDropdownOpenChange}
                     />
                   </td>
                   <td className="sp-price">{row.price ? `Rs.${row.price}` : '—'}</td>
@@ -268,7 +360,9 @@ const SalePurchase = () => {
                       type="number"
                       min="1"
                       value={row.quantity}
+                      ref={(el) => (qtyRefs.current[index] = el)}
                       onChange={(e) => handleQtyChange(index, e.target.value)}
+                      onKeyDown={(e) => handleQtyKeyDown(e, index)}
                     />
                   </td>
                   <td className="sp-subtotal">{row.subtotal ? `Rs.${row.subtotal}` : '—'}</td>
@@ -358,7 +452,10 @@ const SalePurchase = () => {
               <div className="sp-inv-totals">
                 <div className="sp-inv-row"><span>Subtotal</span><span>Rs.{successInvoice.subtotal.toFixed(2)}</span></div>
                 {successInvoice.tax > 0 && (
-                  <div className="sp-inv-row muted"><span>GST ({successInvoice.tax}%)</span><span>Rs.{(successInvoice.totalAmount - successInvoice.subtotal).toFixed(2)}</span></div>
+                  <div className="sp-inv-row muted">
+                    <span>GST ({successInvoice.tax}%)</span>
+                    <span>Rs.{(successInvoice.totalAmount - successInvoice.subtotal).toFixed(2)}</span>
+                  </div>
                 )}
                 <div className="sp-inv-row grand"><span>Grand Total</span><span>Rs.{successInvoice.totalAmount.toFixed(2)}</span></div>
               </div>
